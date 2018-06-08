@@ -1,4 +1,4 @@
-This is a gdbm interface for Lua 5.1. gdbm is the GNU database manager,
+This is a gdbm interface for Lua 5.2. gdbm is the GNU database manager,
 a replacement of the UNIX dbm library available at
 	http://www.gnu.org/software/gdbm/
 If you're running Linux, you probably already have gdbm installed.

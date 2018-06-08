@@ -1,8 +1,8 @@
 /*
 * lgdbm.c
-* gdbm interface for Lua 5.1
+* gdbm interface for Lua 5.2
 * Luiz Henrique de Figueiredo <lhf@tecgraf.puc-rio.br>
-* 24 Apr 2012 21:09:27
+* 02 Jul 2013 23:17:35
 * This code is hereby placed in the public domain.
 */
 
@@ -20,7 +20,7 @@
 #include "lauxlib.h"
 
 #define MYNAME		"gdbm"
-#define MYVERSION	MYNAME " library for " LUA_VERSION " / Apr 2012 / \n"
+#define MYVERSION	MYNAME " library for " LUA_VERSION " / Jul 2013 / \n"
 #define MYTYPE		MYNAME " handle"
 
 static datum encode(lua_State *L, int i)
@@ -119,8 +119,7 @@ static int Lopen(lua_State *L)			/** open(file,mode) */
  else
  {
   *p=dbf;
-  luaL_getmetatable(L,MYTYPE);
-  lua_setmetatable(L,-2);
+  luaL_setmetatable(L,MYTYPE);
   return 1;
  }
 }
@@ -259,8 +258,7 @@ static const luaL_Reg R[] =
 LUALIB_API int luaopen_gdbm(lua_State *L)
 {
  luaL_newmetatable(L,MYTYPE);
- lua_setglobal(L,MYNAME);
- luaL_register(L,MYNAME,R);
+ luaL_setfuncs(L,R,0);
  lua_pushliteral(L,"version");			/** version */
  lua_pushliteral(L,MYVERSION);
  lua_pushstring(L,gdbm_version);

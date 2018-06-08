@@ -1,6 +1,6 @@
 -- test gdbm binding
 
-require"gdbm"
+local gdbm=require"gdbm"
 
 -- support code --------------------------------------------------------------
 
