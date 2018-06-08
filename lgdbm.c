@@ -2,7 +2,7 @@
 * lgdbm.c
 * gdbm interface for Lua 5.1
 * Luiz Henrique de Figueiredo <lhf@tecgraf.puc-rio.br>
-* 28 Jun 2007 16:36:32
+* 29 Apr 2010 23:07:40
 * This code is hereby placed in the public domain.
 */
 
@@ -16,13 +16,11 @@
 #include "lua.h"
 #include "lauxlib.h"
 
-#ifndef lua_boxpointer
 #define lua_boxpointer(L,u) \
 	(*(void **)(lua_newuserdata(L, sizeof(void *))) = (u))
-#endif
 
 #define MYNAME		"gdbm"
-#define MYVERSION	MYNAME " library for " LUA_VERSION " / Jun 2007 / \n"
+#define MYVERSION	MYNAME " library for " LUA_VERSION " / Apr 2010 / \n"
 #define MYTYPE		MYNAME " handle"
 
 static datum encode(lua_State *L, int i)
@@ -58,9 +56,9 @@ static const char* errorstring(void)
 
 static int pushresult(lua_State *L, int rc)
 {
- if (rc>=0)
+ if (rc==0)
  {
-  lua_pushboolean(L,!rc);
+  lua_settop(L,1);
   return 1;
  }
  else
@@ -137,7 +135,8 @@ static int Lsync(lua_State *L)			/** sync(file) */
 {
  GDBM_FILE dbf=Pget(L,1);
  gdbm_sync(dbf);
- return 0;
+ lua_settop(L,1);
+ return 1;
 }
 
 static int Lexists(lua_State *L)		/** exists(file,key) */
@@ -199,32 +198,20 @@ static int Lnextkey(lua_State *L)		/** nextkey(file,key) */
  return decode(L,dat);
 }
 
-static int Lfdesc(lua_State *L)			/** fdesc(file) */
-{
-#ifdef GDBM_NOLOCK
- GDBM_FILE dbf=Pget(L,1);
- lua_pushnumber(L,gdbm_fdesc(dbf));
-#else
- lua_pushnil(L);
-#endif
- return 1;
-}
-
-static int Ltostring(lua_State *L)              /** tostring(file) */
+static int Ltostring(lua_State *L)
 {
  GDBM_FILE p=Pget(L,1);
  lua_pushfstring(L,"%s %p",MYTYPE,(void*)p);
  return 1;
 }
 
-static const luaL_reg R[] =
+static const luaL_Reg R[] =
 {
 	{ "__gc",	Lclose		},
-	{ "__tostring",	Ltostring	},
+	{ "__tostring",	Ltostring	},	/** __tostring(file) */
 	{ "close",	Lclose		},
 	{ "delete",	Ldelete		},
 	{ "exists",	Lexists		},
-	{ "fdesc",	Lfdesc		},
 	{ "fetch",	Lfetch		},
 	{ "firstkey",	Lfirstkey	},
 	{ "insert",	Linsert		},
@@ -233,15 +220,14 @@ static const luaL_reg R[] =
 	{ "reorganize",	Lreorganize	},
 	{ "replace",	Lreplace	},
 	{ "sync",	Lsync		},
-	{ "tostring",	Ltostring	},
 	{ NULL,		NULL		}
 };
 
 LUALIB_API int luaopen_gdbm(lua_State *L)
 {
  luaL_newmetatable(L,MYTYPE);
- lua_pushvalue(L,-1);
- luaL_openlib(L,NULL,R,0);
+ lua_setglobal(L,MYNAME);
+ luaL_register(L,MYNAME,R);
  lua_pushliteral(L,"version");			/** version */
  lua_pushliteral(L,MYVERSION);
  lua_pushstring(L,gdbm_version);
@@ -250,6 +236,5 @@ LUALIB_API int luaopen_gdbm(lua_State *L)
  lua_pushliteral(L,"__index");
  lua_pushvalue(L,-2);
  lua_settable(L,-3);
- lua_setglobal(L,MYNAME);
  return 1;
 }

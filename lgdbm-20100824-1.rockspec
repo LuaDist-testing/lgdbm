@@ -1,16 +1,16 @@
 -- This file was automatically generated for the LuaDist project.
 
 package="lgdbm"
-version="20070628-1"
+version="20100824-1"
 -- LuaDist source
 source = {
-  tag = "20070628-1",
+  tag = "20100824-1",
   url = "git://github.com/LuaDist-testing/lgdbm.git"
 }
 -- Original source
 -- source = {
 --    url = "http://www.tecgraf.puc-rio.br/~lhf/ftp/lua//5.1/lgdbm.tar.gz",
---    md5 = "205a5e34676097732c7e33e8c7034580",
+--    md5 = "aaa70c65c998e18487360f32dfac12af",
 --    dir = "gdbm"
 -- }
 description = {
@@ -26,23 +26,20 @@ description = {
 dependencies = {
    "lua >= 5.1"
 }
-
 external_dependencies = {
    GDBM = {
       header = "gdbm.h",
-      library = "libgdbm.so"
+      library = "gdbm"
    }
 }
 build = {
-   type = "make",
-   install_pass = false,
-   build_target = "so",
-   build_variables = {
-      LUAINC = "$(LUA_INCDIR)",
-      LUALIB = "$(LUA_LIBDIR)",
-      LUABIN = "$(LUA_BINDIR)" 
+   type = "builtin",
+   modules = {
+      gdbm = {
+         sources = "lgdbm.c",
+         libdirs = { "$(GDBM_LIBDIR)" },
+         incdirs = { "$(GDBM_INCDIR)" },
+         libraries = { "gdbm" },
+      },
    },
-   install = {
-      lib = { "gdbm.so" }
-   }
 }

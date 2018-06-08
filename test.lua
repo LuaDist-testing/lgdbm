@@ -6,10 +6,10 @@ require"gdbm"
 gdbm.version=string.gsub(gdbm.version,"\n.*version (.-). .*$","using GDBM %1")
 
 do
- local M= {
+local M= {
 	__index=function (t,k) return t.gdbm:fetch(k) end,
 	__newindex=function (t,k,v)
-		if v then t.gdbm:replace(k,v) else t.gdbm:delete(k) end
+		if v~=nil then t.gdbm:replace(k,v) else t.gdbm:delete(k) end
 	end
 }
 
@@ -17,21 +17,25 @@ function gdbm.proxy(t)
  return setmetatable({gdbm=t},M)
 end
 
+local function keys(d,k)
+  if k==nil then return d:firstkey() else return d:nextkey(k) end
 end
 
 function gdbm.keys(d)
- return function (d,k)
-   if k==nil then return d:firstkey() else return d:nextkey(k) end
- end,d
+ return keys,d
+end
+
+local function entries(d,k)
+  local v
+  if k==nil then k=d:firstkey() else k=d:nextkey(k) end
+  if k==nil then v=nil else v=d:fetch(k) end
+  return k,v
 end
 
 function gdbm.entries(d)
- return function (d,k)
-   local v
-   if k==nil then k=d:firstkey() else k=d:nextkey(k) end
-   if k==nil then v=nil else v=d:fetch(k) end
-   return k,v
- end,d
+ return entries,d
+end
+
 end
 
 ------------------------------------------------------------------------------
@@ -45,7 +49,7 @@ function show(d)
  local n=0
  for k,v in d:entries() do
   n=n+1
-  print(n,k,v) 
+  print(n,k,v)
  end
 end
 
@@ -57,13 +61,12 @@ d=assert(gdbm.open(F,"n"))
 
 ------------------------------------------------------------------------------
 testing"insert method"
-print(d:insert("JAN","January"))
+d:insert("JAN","January")
 d:insert("FEB","February")
 d:insert("MAR","March")
 d:insert("APR","April")
 d:insert("MAY","May")
 d:insert("JUN","June")
-
 show(d)
 
 ------------------------------------------------------------------------------
@@ -75,7 +78,6 @@ t.SEP="September"
 t.OCT="October"
 t.NOV="November"
 t.DEC="December"
-
 show(d)
 
 ------------------------------------------------------------------------------
@@ -86,12 +88,19 @@ t.MAR=nil
 t.APR=nil
 t.MAY=nil
 t.JUN=nil
-
 show(d)
+
+-- for i=1,1000 do t[i]=tostring(i) end
+-- os.execute("ls -l "..F.." ; md5sum "..F)
+-- for i=1,1000 do t[i]=nil end
+-- print("reorganize",d:reorganize())
+-- os.execute("ls -l "..F.." ; md5sum "..F)
 
 ------------------------------------------------------------------------------
 testing"return codes"
 print("JAN exists?",d:exists("JAN"))
+print("replace JAN?",d:replace("JAN","Janeiro"))
+print("JAN is now",t.JAN)
 print("DEC exists?",d:exists("DEC"))
 print("replace DEC?",d:replace("DEC","Dezembro"))
 print("DEC is now",t.DEC)

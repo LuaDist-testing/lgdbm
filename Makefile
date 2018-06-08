@@ -1,7 +1,7 @@
 # makefile for gdbm library for Lua
 
 # change these to reflect your Lua installation
-LUA= /tmp/lhf/lua-5.1.2
+LUA= /tmp/lhf/lua-5.1.4
 LUAINC= $(LUA)/src
 LUALIB= $(LUA)/src
 LUABIN= $(LUA)/src
@@ -17,14 +17,22 @@ GDBMLIB= -lgdbm
 # otherwise, change these to reflect your gdbm installation
 #GDBM= /tmp/lhf/gdbm-1.8.3
 #GDBMINC= -I$(GDBM)
-#GDBMLIB= -L$(GDBM)/.libs -lgdbm
 #GDBMLIB= $(GDBM)/.libs/libgdbm.a
+
+# if your system already has gdbm, this should suffice
+GDBMLIB= -lgdbm
+# otherwise, change these to reflect your gdbm installation
+GDBM= /tmp/lhf/gdbm-1.8.3
+GDBMINC= -I$(GDBM)
+GDBMLIB= $(GDBM)/.libs/libgdbm.a
 
 # probably no need to change anything below here
 CC= gcc
 CFLAGS= $(INCS) $(WARN) -O2 $G
 WARN= -ansi -pedantic -Wall
 INCS= -I$(LUAINC) $(GDBMINC)
+MAKESO= $(CC) -shared
+#MAKESO= env MACOSX_DEPLOYMENT_TARGET=10.3 $(CC) -bundle -undefined dynamic_lookup
 
 MYNAME= gdbm
 MYLIB= l$(MYNAME)
@@ -42,7 +50,7 @@ o:	$(MYLIB).o
 so:	$T
 
 $T:	$(OBJS)
-	$(CC) -o $@ -shared $(OBJS) $(GDBMLIB)
+	$(MAKESO) -o $@ $(OBJS) $(GDBMLIB)
 
 clean:
 	rm -f $(OBJS) $T core core.* test.gdbm
@@ -53,20 +61,20 @@ doc:
 
 # distribution
 
-FTP= $(HOME)/public/ftp/lua/5.1
+FTP= www:www/ftp/lua/5.1
+F= http://www.tecgraf.puc-rio.br/~lhf/ftp/lua/5.1/$A
 D= $(MYNAME)
 A= $(MYLIB).tar.gz
 TOTAR= Makefile,README,$(MYLIB).c,test.lua
 
-tar:	clean
+distr:	clean
 	tar zcvf $A -C .. $D/{$(TOTAR)}
-
-distr:	tar
 	touch -r $A .stamp
-	mv $A $(FTP)
+	scp -p $A $(FTP)
 
 diff:	clean
-	tar zxf $(FTP)/$A
+	wget -q -N $F
+	tar zxf $A
 	diff $D .
 
 # eof
