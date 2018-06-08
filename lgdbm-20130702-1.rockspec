@@ -1,16 +1,16 @@
 -- This file was automatically generated for the LuaDist project.
 
 package="lgdbm"
-version="20101030-1"
+version="20130702-1"
 -- LuaDist source
 source = {
-  tag = "20101030-1",
+  tag = "20130702-1",
   url = "git://github.com/LuaDist-testing/lgdbm.git"
 }
 -- Original source
 -- source = {
 --    url = "http://www.tecgraf.puc-rio.br/~lhf/ftp/lua//5.1/lgdbm.tar.gz",
---    md5="46ea83ab2eb4f3f238af8c42c3927011",
+--    md5="9c60dcf243486cd64045e592d1aff055",
 --    dir = "gdbm"
 -- }
 description = {

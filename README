@@ -21,12 +21,13 @@ Please send comments, suggestions, and bug reports to lhf@tecgraf.puc-rio.br .
 -------------------------------------------------------------------------------
 
 gdbm library:
- __tostring(file) 		 nextkey(file,key) 
- close(file) 			 open(file,how) 
- delete(file,key) 		 reorganize(file) 
- exists(file,key) 		 replace(file,key,data) 
+ __tostring(file) 		 insert(file,key,data) 
+ close(file) 			 nextkey(file,key) 
+ delete(file,key) 		 open(file,mode) 
+ exists(file,key) 		 reorganize(file) 
+ export(file,output) 		 replace(file,key,data) 
  fetch(file,key) 		 sync(file) 
  firstkey(file) 		 version 
- insert(file,key,data) 
+ import(file,input,[replace]) 
 
 -------------------------------------------------------------------------------

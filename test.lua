@@ -124,7 +124,18 @@ print("delete XXX",d:delete("XXX"))
 
 ------------------------------------------------------------------------------
 testing"chaining"
-d:insert("FEB","Fevereiro"):delete("JUL"):replace("NOV","Novembro"):show():close()
+d:insert("FEB","Fevereiro"):delete("JUL"):replace("NOV","Novembro"):show()
+
+------------------------------------------------------------------------------
+if d.export and d.import then
+testing"export/import"
+F="test.flat"
+print("export  ",d:export(F))
+print("import store",d:import(F))
+print("import replace",d:import(F,true))
+end
+
+d:close()
 
 ------------------------------------------------------------------------------
 print""
