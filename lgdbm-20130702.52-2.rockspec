@@ -1,10 +1,10 @@
 -- This file was automatically generated for the LuaDist project.
 
 package = "lgdbm"
-version = "20130702.52-1"
+version = "20130702.52-2"
 -- LuaDist source
 source = {
-  tag = "20130702.52-1",
+  tag = "20130702.52-2",
   url = "git://github.com/LuaDist-testing/lgdbm.git"
 }
 -- Original source
@@ -19,6 +19,8 @@ description = {
       A database library for Lua based on GNU dbm.
       GNU dbm is a set of database routines that use extensible hashing.
       It works similar to the standard Unix dbm routines.
+      
+      Docs at: http://www.pjb.com.au/comp/lua/lgdbm.html
    ]],
    homepage = "http://www.tecgraf.puc-rio.br/~lhf/ftp/lua/#lgdbm",
    license = "Public domain"
